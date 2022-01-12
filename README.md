@@ -41,14 +41,6 @@ If you use any of the material here provided, you must cite our work using the f
     author = {Di Bona, Gabriele and Di Gaetano, Leonardo and Latora, Vito and Coghi, Francesco},
     archivePrefix = {arXiv},
     arxivId = {TODO},
-    doi = {TODO},
-    journal = {TODO},
-    volume = {TODO},
-    number = {TODO},
-    pages = {TODO},
-    year = {2022}
-    publisher = {TODO},
-    url = {https://journals.aps.org/pre/abstract/10.1103/PhysRevE.100.062301},
 }
 ```
 
