@@ -35,9 +35,9 @@ After all needed simulations are done, you can do the analysis and create the pl
 If you use any of the material here provided, you must cite our work using the following bibtex entry:
 
 ```
-@article{DiBona2022adaptive,
+@article{dibona2022adaptive,
     title = {Maximal diffusivity of adaptive random walks},
-    abstract = {TODO},
+    abstract = {Random walks are the most versatile tool to explore a complex network. These include maximum entropy random walks (MERWs), which are maximally dispersing and therefore play a key role as they optimize information spreading. However, building a MERW comes at the cost of knowing beforehand the global structure of the network to be explored. Here, we propose an adaptive random walk (ARW), which instead maximizes dispersion by updating its transition rule on the local information collected while exploring the network. We show how to derive the ARW via a large-deviation representation of the MERW as a finite-time rare event of an unbiased random walk and study its dynamics on synthetic and real-world networks.},
     author = {Di Bona, Gabriele and Di Gaetano, Leonardo and Latora, Vito and Coghi, Francesco},
     archivePrefix = {arXiv},
     arxivId = {TODO},
