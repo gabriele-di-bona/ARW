@@ -1,4 +1,4 @@
-name: gt
+name: ARW
 channels:
   - conda-forge
   - defaults
@@ -269,5 +269,5 @@ dependencies:
     - pymongo==3.11.4
     - semanticscholar==0.1.6
     - tenacity==7.0.0
-prefix: 
+prefix:
 
