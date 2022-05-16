@@ -20,7 +20,7 @@ Currently the only algorithms supported are URW, MERW and ARW. If for example yo
     - Notice also that the function is slowed down (a lot) if you do prints under njit. Moreover, if you put a print inside a njit function, the print might appear in output after some time.
 
 ## Scripts
-There are some scripts you can use to do all the simulations needed to make the plots in the paper. These are the scripts starting with *fig2* or *fig3* inside the folder *codes*. These scripts need the proper arguments. If you have a cluster, you can use the *bash_scripts/* files, in which all parameters and the correct codes are properly set. If you are running the scripts in your local machine, you can use the same bash scripts for a guide to run all the necessary files in the correct way.
+There are some scripts you can use to do all the simulations needed to make the plots in the paper. These are the scripts starting with *fig1* or *fig2* inside the folder *codes*. These scripts need the proper arguments. If you have a cluster, you can use the *bash_scripts/* files, in which all parameters and the correct codes are properly set. If you are running the scripts in your local machine, you can use the same bash scripts for a guide to run all the necessary files in the correct way.
 
 If you do not have enough computational resources, you can reduce the number of iterations for each set of parameters and algorithm. Moreover, you can create new scripts that use more than one core at a time, doing more simulations within the same process, by changing appropriately the parameters and, eventually, the code.
 
