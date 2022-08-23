@@ -1,5 +1,6 @@
+graphs/*
+data/*
 .ipynb_checkpoints/
 bash_scripts/*.o*
-bash_scripts/*output*
 *.ipynb_checkpoints/
 *__pycache__/
