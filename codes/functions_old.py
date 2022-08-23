@@ -192,7 +192,7 @@ def load_graph(name_graph = "Erdos_Renyi", N_requested = 50, avg_k_requested = 3
         name_file += "_N_%d_k_%.2f.pkl"%(N_requested,avg_k_requested)
     try:
         dump_graph = False # Become True if this is not found and a new graph is created
-        with open(os.path.join(graph_dir, name_file), 'rb') as fp:
+        with open(os.path.join(graph_dir, name_file + ".pkl"), 'rb') as fp:
             A = joblib.load(fp)
         G = nx.convert_matrix.from_numpy_matrix(A)
         if do_prints:
@@ -286,7 +286,7 @@ def load_graph(name_graph = "Erdos_Renyi", N_requested = 50, avg_k_requested = 3
         if do_prints:
             print("Requested N=%d, k=%.2f, created with N=%d, k=%.2f. Namefile dumped with original request."
                 %(N_requested,avg_k_requested, len(A), avg_k), flush=True)
-        with open(os.path.join(graph_dir, name_file), 'wb') as fp:
+        with open(os.path.join(graph_dir, name_file + ".pkl"), 'wb') as fp:
             joblib.dump(A, fp)
     if show_graph == True:
         plot_graph(G, use_spring_layout=use_spring_layout, use_circular_layout=use_circular_layout, 
@@ -595,7 +595,7 @@ def njit_all_RW_entropy_theoretic(do_ARW_step,start, types_entropy, indexes_to_s
            time_explored_nodes_list_N,time_explored_links_list_M,X_list,index_saving, \
            empirical_entr_prod_list_M, maximum_entr_prod_explored_list_M
 
-def all_RW_preprocessing_entropy_theoretic(algorithm,G,s_fin=1,alpha=.1,dt=int(1e4), start = 0, num_to_save = 1000, renormalize_r = True, max_M = 0,
+def all_RW_preprocessing_entropy_theoretic(algorithm,G,s_fin=1,alpha=.1,dt=int(1e4), start = 0, num_to_save = 1000, renormalize_r = True,
                                            types_entropy = [2,3], stop_at_covering_links = True, saving=False, output_dir = "./data/", name_graph="graph"):
 
     '''
@@ -622,7 +622,6 @@ def all_RW_preprocessing_entropy_theoretic(algorithm,G,s_fin=1,alpha=.1,dt=int(1
             - num_to_save: creates a geomspace and linspace between 1 and dt (or N, or M) to save the entropies (integer, default: 1000)
             - renormalize_r: if False, the initial array r in the ARW is a random array with values between 0 and 1;
                 if True, it also gets renormalized to sum in l1 to 1 (boolean)
-            - max_M: maximum number M to explore (needs stop_at_covering_links=True). If 0 is provided, then it is set to the total number of edges (integer, default: 0)
             - types_entropy: list of the types of entropy to calculate during the process. Give at least one of the following (list of integers, default: [2,3])
                 - type_entropy = 0 ---> entropy calculated on graph of explored nodes and all their links, 
                     included first neighbors and their links to the explored nodes
@@ -677,9 +676,6 @@ def all_RW_preprocessing_entropy_theoretic(algorithm,G,s_fin=1,alpha=.1,dt=int(1
     N = len(G.nodes()) # Size of the graph
     A = nx.adjacency_matrix(G).todense() # adjacency matrix
     M = len(G.edges()) # total number of links: PROBLEM IF ANTISYMMETRIC!?
-    if stop_at_covering_links == True and max_M < M and max_M > 0:
-        print(f'Changing M from {M} to {max_M}', flush=True)
-        M = max_M
     k_list = np.array(list(dict(G.degree()).values())) # degree list
     avg_k = np.mean(k_list)
     e = np.real(np.linalg.eigvals(A)) # eigenvalues
@@ -828,7 +824,7 @@ def all_RW_preprocessing_entropy_theoretic(algorithm,G,s_fin=1,alpha=.1,dt=int(1
 
 
 
-def do_multiple_parameters_simulation(ID,graphs, algorithms, alpha, chosen_dts, num_to_save, types_entropy, stop_at_covering_links, output_dir, renormalize_r, seed, max_M):
+def do_multiple_parameters_simulation(ID,graphs, algorithms, alpha, chosen_dts, num_to_save, types_entropy, stop_at_covering_links, output_dir, renormalize_r):
     '''
         Runs a simulation based on the parameters given and the ID.
         
@@ -851,10 +847,7 @@ def do_multiple_parameters_simulation(ID,graphs, algorithms, alpha, chosen_dts, 
             - output_dir: main directory where to create the subfolders where the results get stored (string, valid path)
             - renormalize_r: if False, the initial array r in the ARW is a random array with values between 0 and 1;
                 if True, it also gets renormalized to sum in l1 to 1 (boolean)
-            - seed: seed to use for np.random functions (integer)
-            - max_M: maximum number M to explore (needs stop_at_covering_links=True). If 0 is provided, then it is set to the total number of edges (integer)
     '''
-    np.random.seed(seed)
     print("Starting ID %d"%(ID),flush=True)
     
     name_graph = list(graphs.keys())[ID % len(graphs)]
@@ -862,7 +855,7 @@ def do_multiple_parameters_simulation(ID,graphs, algorithms, alpha, chosen_dts, 
     dt = chosen_dts[(ID // len(graphs) // len(algorithms)) % len(chosen_dts)]
     repetition = ID // len(graphs) // len(algorithms) // len(chosen_dts)
     
-    print(f"Simulation on graph {name_graph} with algorithm {algorithm}, using alpha={alpha} and dt={dt}",flush=True)
+    print(f"Simulation on graph {name_graph} with algorithm {algorithm}, using alpha={alpha} and dt ={dt}",flush=True)
     
     N_requested = graphs[name_graph]["N_requested"]
     avg_k_requested = graphs[name_graph]["avg_k_requested"]
@@ -878,7 +871,6 @@ def do_multiple_parameters_simulation(ID,graphs, algorithms, alpha, chosen_dts, 
     print("Average degree =",np.mean(list(dict(G.degree()).values())))
     
     N = len(G.nodes()) # Size of the graph
-    M = len(G.edges())
     k_list = G.degree() # degree list
     A = nx.adjacency_matrix(G).todense() # adjacency matrix
     avg_k = np.mean(list(dict(G.degree()).values()))
@@ -887,18 +879,17 @@ def do_multiple_parameters_simulation(ID,graphs, algorithms, alpha, chosen_dts, 
     start = np.random.randint(N)
     print(f"Starting from {start}", flush = True)
     
-    if max_M <= 0 or max_M >= M:
-        # Doing some calculations before starting, on the eigenvalues and hence the maximum entropies
-        eigenvector_centrality = nx.eigenvector_centrality(G, max_iter=600)
-        eig_cent_list = np.array(list(eigenvector_centrality.values()))
-        max_eig_node = np.real(np.argmax(eig_cent_list))
-        median_eig_node = np.argmin(np.abs(eig_cent_list-np.median(eig_cent_list)))
-        min_eig_node = np.argmin(eig_cent_list)
-        e = np.real(np.linalg.eigvals(A)) # eigenvalues
-        max_eig = max(e) # maximum eigenvalue
-        max_entr_prod_rate = np.log(max_eig) # maximum eigenvalue
-        print(f"Maximum entropy production rate is {max_entr_prod_rate}", flush = True)
-        print(f"Node with maximum / median / minimum eigenvector centraility is {max_eig_node} / {median_eig_node} / {min_eig_node}", flush = True)
+    # Doing some calculations before starting, on the eigenvalues and hence the maximum entropies
+    eigenvector_centrality = nx.eigenvector_centrality(G, max_iter=600)
+    eig_cent_list = np.array(list(eigenvector_centrality.values()))
+    max_eig_node = np.real(np.argmax(eig_cent_list))
+    median_eig_node = np.argmin(np.abs(eig_cent_list-np.median(eig_cent_list)))
+    min_eig_node = np.argmin(eig_cent_list)
+    e = np.real(np.linalg.eigvals(A)) # eigenvalues
+    max_eig = max(e) # maximum eigenvalue
+    max_entr_prod_rate = np.log(max_eig) # maximum eigenvalue
+    print(f"Maximum entropy production rate is {max_entr_prod_rate}", flush = True)
+    print(f"Node with maximum / median / minimum eigenvector centraility is {max_eig_node} / {median_eig_node} / {min_eig_node}", flush = True)
 
     # DOING ALL THE SIMULATIONS... CHOOSE BASED ON ID
     end_time = datetime.datetime.now()
@@ -907,7 +898,6 @@ def do_multiple_parameters_simulation(ID,graphs, algorithms, alpha, chosen_dts, 
 
     to_save = all_RW_preprocessing_entropy_theoretic(algorithm, G, s_fin = 1, alpha = alpha, dt=int(dt), start = start, 
                                                      num_to_save = num_to_save, renormalize_r = renormalize_r,
-                                                     max_M = max_M,
                                                      types_entropy = types_entropy, stop_at_covering_links = stop_at_covering_links, 
                                                      saving = True, output_dir = output_dir, name_graph = name_graph)
 
