@@ -1,5 +1,3 @@
-data/
-graphs/
 .ipynb_checkpoints/
 bash_scripts/*.o*
 bash_scripts/*output*
