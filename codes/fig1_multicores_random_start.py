@@ -53,6 +53,8 @@ num_to_save = 100
 types_entropy = [2,3]
 stop_at_covering_links = True
 renormalize_r = True
+seed = np.random.randint(2**32-1)
+max_M = 0
 
 print(f"For each repetition, %d simulations are to be done"%(len(graphs) * len(algorithms) * len(chosen_dts)), flush=True)
 
@@ -62,9 +64,9 @@ print("ID in range(%d, %d)"%(ID*cores, (ID+1)*cores))
 if cores > 1:
     pool = mp.Pool(cores)
     for i in range(ID*cores, (ID+1)*cores):
-        pool.apply_async(do_multiple_parameters_simulation, args=(ID,graphs, algorithms, alpha, chosen_dts, num_to_save, types_entropy, stop_at_covering_links, output_dir, renormalize_r))
+        pool.apply_async(do_multiple_parameters_simulation, args=(ID,graphs, algorithms, alpha, chosen_dts, num_to_save, types_entropy, stop_at_covering_links, output_dir, renormalize_r, seed, max_M))
     pool.close()
     pool.join()
 else:
     for i in range(ID*cores, (ID+1)*cores):
-        do_multiple_parameters_simulation(ID,graphs, algorithms, alpha, chosen_dts, num_to_save, types_entropy, stop_at_covering_links, output_dir, renormalize_r)
+        do_multiple_parameters_simulation(ID,graphs, algorithms, alpha, chosen_dts, num_to_save, types_entropy, stop_at_covering_links, output_dir, renormalize_r, seed, max_M)

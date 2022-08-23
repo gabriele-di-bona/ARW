@@ -12,5 +12,5 @@ module load anaconda3
 export OMP_NUM_THREADS=1
 
 conda activate ARW
-cd ../../codes
-python fig2_SM_multicores_random_start_no_renormalization.py -ID $(( ${SGE_TASK_ID} - 1 )) -c 1
+cd ../../../codes
+python fig_SM_multicores_random_start_no_renormalization.py -ID $(( ${SGE_TASK_ID} - 1 )) -c 1
